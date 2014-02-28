@@ -92,3 +92,76 @@ class Game:
         self.board.flip(upper_right, width, height)
         self.move_count = self.move_count + 1
 
+
+class MiniGame(Game):
+
+    abs_win = True
+    finished = False
+    results = []
+
+    def play(self, move, move_count=0, parent=None, grand=None):
+        self.move_count = move_count
+        self.move(*move)
+        moves = self.possible_moves()
+
+        if not grand:
+            grand = self
+
+        if not moves:
+            self.finished = True
+            parent.finished = True
+            result = self.won()
+            if not result:
+                grand.abs_win = False
+            grand.results.append(result)
+
+        while(not self.finished and grand.abs_win):
+            for move in moves:
+                mini_game = MiniGame(copy.deepcopy(self.board))
+                mini_game.play(move, self.move_count, self, grand)
+
+    def possible_moves(self):
+        """
+        Collect all possible moves on the current game board
+        """
+        moves = []
+        x = 0
+        while(x < self.board.size):
+            y = 0
+            while(y < self.board.size):
+                if self.board.grid[y][x] == 0:
+                    y = y + 1
+                    continue
+                moves = moves + self.spot_possible_moves(x, y)
+                y = y + 1
+            x = x + 1
+        return moves
+
+
+class demoGame(MiniGame):
+    """
+    A demo game plays until the end, we use this to
+    decide how good our move is.
+    """
+
+    results = []
+
+    def play(self, move, parent=None, grand=None):
+        """
+        Let's play a demo game, and store the result
+        """
+        self.move(*move)
+        moves = self.possible_moves()
+
+        if not grand:
+            grand = self
+
+        if not moves:
+            self.finished = True
+            parent.finished = True
+            grand.results.append(self.won())
+
+        while(not self.finished):
+            for move in moves:
+                mini_game = demoGame(copy.deepcopy(self.board))
+                mini_game.play(move, self, grand)
