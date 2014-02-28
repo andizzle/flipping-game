@@ -1,6 +1,8 @@
 from game import Game
+from board import Board
 
 
 if __name__ == "__main__":
-    game = Game(5)
-    game.possible_moves()
+    board = Board(5)
+    game = Game(board)
+    game.play()
