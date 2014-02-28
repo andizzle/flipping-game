@@ -3,14 +3,15 @@ from board import Board
 
 
 class Game:
-    moves = 0
+    move_count = 0
     board = None
+    last_move = False
 
-    def __init__(self, board_size):
+    def __init__(self, board):
         """
         Let's create the game
         """
-        self.board = Board(board_size)
+        self.board = board
 
     def is_ended(self):
         """
