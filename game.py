@@ -85,6 +85,19 @@ class Game:
             queue.put(moves)
         return moves
 
+    def play(self):
+        """
+        Play the game, get all possible first moves, and start mini games
+        """
+        moves = self.possible_moves()
+        move_range = range(0, len(moves), self.workers)
+        for moves_set in [moves[i:i + self.workers] for i in move_range]:
+            for w in xrange(len(moves_set)):
+                mini_game = MiniGame(copy.deepcopy(self.board))
+                #mini_game.play(moves_set[w])
+                mini_game.play([(3, 0), 1, 3])
+                break
+
     def move(self, upper_right, width, height):
         """
         Make a move, increase the move count
